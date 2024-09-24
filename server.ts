@@ -38,6 +38,21 @@ async function handlePostRequest(request: Request) {
   });
 }
 
+async function handleUpdateExpressionRequest(request: Request) {
+  const data = await request.json();
+
+  // Send expression update to all WebSocket clients
+  const message = { type: "update-expression", data };
+  for (const socket of sockets) {
+    socket.send(JSON.stringify(message));
+  }
+
+  return new Response(JSON.stringify({ status: "expression updated" }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 function handleRequest(request: Request) {
   if (request.headers.get("upgrade") === "websocket") {
     return handleWebSocket(request);
@@ -46,6 +61,11 @@ function handleRequest(request: Request) {
     request.url === "http://localhost:8080/send"
   ) {
     return handlePostRequest(request);
+  } else if (
+    request.method === "POST" &&
+    request.url === "http://localhost:8080/update-expression"
+  ) {
+    return handleUpdateExpressionRequest(request);
   } else {
     return new Response("Hello, Deno!", {
       status: 200,
