@@ -34,7 +34,10 @@ async function handlePostRequest(request: Request) {
 
   return new Response(JSON.stringify({ status: "ok" }), {
     status: 200,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
   });
 }
 
@@ -49,7 +52,11 @@ async function handleUpdateExpressionRequest(request: Request) {
 
   return new Response(JSON.stringify({ status: "expression updated" }), {
     status: 200,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
   });
 }
 
@@ -69,7 +76,11 @@ function handleRequest(request: Request) {
   } else {
     return new Response("Hello, Deno!", {
       status: 200,
-      headers: { "Content-Type": "text/plain" },
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
     });
   }
 }
