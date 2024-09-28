@@ -60,6 +60,42 @@ async function handleUpdateExpressionRequest(request: Request) {
   });
 }
 
+async function handleUpdatePoseRequest(request: Request) {
+  const data = await request.json();
+
+  const message = { type: "update-pose", data };
+  for (const socket of sockets) {
+    socket.send(JSON.stringify(message));
+  }
+
+  return new Response(JSON.stringify({ status: "pose updated" }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}
+
+async function handleSayRequest(request: Request) {
+  const data = await request.json();
+
+  const message = { type: "say", data };
+  for (const socket of sockets) {
+    socket.send(JSON.stringify(message));
+  }
+
+  return new Response(JSON.stringify({ status: "said" }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}
+
 function handleRequest(request: Request) {
   if (request.headers.get("upgrade") === "websocket") {
     return handleWebSocket(request);
@@ -73,6 +109,16 @@ function handleRequest(request: Request) {
     request.url === "http://localhost:8080/update-expression"
   ) {
     return handleUpdateExpressionRequest(request);
+  } else if (
+    request.method === "POST" &&
+    request.url === "http://localhost:8080/update-pose"
+  ) {
+    return handleUpdatePoseRequest(request);
+  } else if (
+    request.method === "POST" &&
+    request.url === "http://localhost:8080/say"
+  ) {
+    return handleSayRequest(request);
   } else {
     return new Response("Hello, Deno!", {
       status: 200,
